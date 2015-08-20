@@ -44,6 +44,7 @@ var FixedDataTableBufferedRows = React.createClass({
     scrollableColumns: PropTypes.array.isRequired,
     showLastRowBorder: PropTypes.bool,
     width: PropTypes.number.isRequired,
+    onDragDrop: PropTypes.func
   },
 
   getInitialState() /*object*/ {
@@ -145,6 +146,8 @@ var FixedDataTableBufferedRows = React.createClass({
           onMouseDown={props.onRowMouseDown}
           onMouseEnter={props.onRowMouseEnter}
           onMouseLeave={props.onRowMouseLeave}
+          onDragDrop={props.onDragDrop}
+          isSortable={props.isSortable}
           className={joinClasses(
             rowClassNameGetter(rowIndex),
             cx('public/fixedDataTable/bodyRow'),

@@ -278,6 +278,21 @@ var FixedDataTable = React.createClass({
      * Whether a column is currently being resized.
      */
     isColumnResizing: PropTypes.bool,
+
+    /**
+     * Active the drag and drop (Sortable) interaction
+     */
+    isSortable: PropTypes.bool,
+
+    /**
+     * Callback that is called when and item is being dragging over the table.
+     *
+     * function (
+     *   itemOnDrag: object,
+     *   itemHover: object
+     * )
+     */
+    onDragDrop: PropTypes.func
   },
 
   getDefaultProps() /*object*/ {
@@ -603,6 +618,10 @@ var FixedDataTable = React.createClass({
     );
   },
 
+  _dragDrop: function () {
+    this.props.onDragDrop && this.props.onDragDrop.apply(this, arguments);
+  },
+
   _renderRows(/*number*/ offsetTop) /*object*/ {
     var state = this.state;
 
@@ -620,6 +639,8 @@ var FixedDataTable = React.createClass({
         onRowMouseEnter={state.onRowMouseEnter}
         onRowMouseLeave={state.onRowMouseLeave}
         rowClassNameGetter={state.rowClassNameGetter}
+        onDragDrop={this._dragDrop}
+        isSortable={this.props.isSortable}
         rowsCount={state.rowsCount}
         rowGetter={state.rowGetter}
         rowHeightGetter={state.rowHeightGetter}

@@ -60,5 +60,8 @@
     "table",
     "data-table",
     "fixed-table"
-  ]
+  ],
+  "dependencies": {
+    "react-dnd": "^1.1.4"
+  }
 }

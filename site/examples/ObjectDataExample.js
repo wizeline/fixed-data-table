@@ -24,6 +24,8 @@ var PropTypes = React.PropTypes;
 var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
 
+var update = require('react/lib/update');
+
 function renderImage(/*string*/ cellData) {
   return <ExampleImage src={cellData} />;
 }
@@ -59,6 +61,30 @@ var ObjectDataExample = React.createClass({
     return this.state.dataList.getObjectAt(index);
   },
 
+  // Each user should implement his own item interaction
+  _changeItemPosition(item, afterItem) {
+    var items = this.state.dataList._cache;
+    var itemIndex = items.indexOf(item.data);
+    var afterItemIndex = items.indexOf(afterItem.data);
+
+    if(itemIndex === afterItemIndex) {
+      return;
+    }
+
+    var stateUpdate = {
+      dataList: {
+        _cache: {
+          $splice: [
+            [itemIndex, 1],
+            [afterItemIndex, 0, item.data]
+          ]
+        }
+      }
+    };
+
+    this.setState(update(this.state, stateUpdate));
+  },
+
   render() {
     var controlledScrolling =
       this.props.left !== undefined || this.props.top !== undefined;
@@ -68,10 +94,12 @@ var ObjectDataExample = React.createClass({
         rowHeight={50}
         headerHeight={50}
         rowGetter={this._rowGetter}
+        onDragDrop={this._changeItemPosition}
         rowsCount={this.state.dataList.getSize()}
         width={this.props.tableWidth}
         height={this.props.tableHeight}
         onContentHeightChange={this._onContentHeightChange}
+        isSortable={true}
         scrollTop={this.props.top}
         scrollLeft={this.props.left}
         overflowX={controlledScrolling ? "hidden" : "auto"}

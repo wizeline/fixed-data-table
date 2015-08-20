@@ -17,6 +17,9 @@ var ExamplePages = Constants.ExamplePages;
 var OtherPages = Constants.OtherPages;
 var Pages = Constants.Pages;
 
+var DragDropContext = require('react-dnd').DragDropContext;
+var HTML5Backend = require('react-dnd/modules/backends/HTML5');
+
 var IndexPage = React.createClass({
   statics: {
     getDoctype() {
@@ -101,4 +104,7 @@ var IndexPage = React.createClass({
   }
 });
 
-module.exports = IndexPage;
+// We need to comment the DragDropContext export when the site is up for the first time and uncomment the normal export
+// that is cause the way that the app is being build don't allow to use the decorated IndexPage component
+module.exports = DragDropContext(HTML5Backend)(IndexPage);
+//module.exports = IndexPage;

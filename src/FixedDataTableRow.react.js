@@ -22,6 +22,11 @@ var translateDOMPositionXY = require('translateDOMPositionXY');
 
 var {PropTypes} = React;
 
+// Drag and drop
+var DropTarget = require('react-dnd').DropTarget;
+var DragSource = require('react-dnd').DragSource;
+var DragDropConfig = require('./FixedDataTableRowDragDropConfig');
+
 /**
  * Component that renders the row for <FixedDataTable />.
  * This component should not be used directly by developer. Instead,
@@ -92,6 +97,16 @@ var FixedDataTableRowImpl = React.createClass({
      * @param object event
      */
     onColumnResize: PropTypes.func,
+
+    /**
+     * Fire when a row is being dragging
+     */
+    onDragDrop: PropTypes.func,
+
+    /**
+     * Active the sortable mode
+     */
+    isSortable: PropTypes.bool
   },
 
   render() /*object*/ {
@@ -235,17 +250,23 @@ var FixedDataTableRow = React.createClass({
      * Width of the row.
      */
     width: PropTypes.number.isRequired,
+
+    onDragDrop: PropTypes.func
   },
 
   render() /*object*/ {
+    var connectDragSource = this.props.connectDragSource;
+    var connectDropTarget = this.props.connectDropTarget;
     var style = {
       width: this.props.width,
       height: this.props.height,
-      zIndex: (this.props.zIndex ? this.props.zIndex : 0),
+      opacity: (this.props.isDragging ? 0.1 : 1),
+      zIndex: (this.props.zIndex ? this.props.zIndex : 0)
     };
+
     translateDOMPositionXY(style, 0, this.props.offsetTop);
 
-    return (
+    return connectDragSource(connectDropTarget(
       <div
         style={style}
         className={cx('fixedDataTableRowLayout/rowWrapper')}>
@@ -253,11 +274,11 @@ var FixedDataTableRow = React.createClass({
           {...this.props}
           offsetTop={undefined}
           zIndex={undefined}
-        />
+          />
       </div>
-    );
-  },
+    ));
+  }
 });
 
-
-module.exports = FixedDataTableRow;
+var FixedDataTableRowDecorated = DropTarget(DragDropConfig.type, DragDropConfig.drop.target, DragDropConfig.drop.collect)(FixedDataTableRow);
+module.exports = DragSource(DragDropConfig.type, DragDropConfig.drag.source, DragDropConfig.drag.collect)(FixedDataTableRowDecorated);
