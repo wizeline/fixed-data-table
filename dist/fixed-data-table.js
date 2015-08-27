@@ -490,7 +490,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *   itemHover: object
 	     * )
 	     */
-	    onDragDrop: PropTypes.func
+	    onDragDrop: PropTypes.func,
+
+	    /**
+	     * Callback that is called when and item is dropped
+	     *
+	     * function (
+	     *   itemOnDrag: object,
+	     *   itemHover: object
+	     * )
+	     */
+	    onDrop: PropTypes.func
 	  },
 
 	  getDefaultProps: function getDefaultProps() /*object*/{
