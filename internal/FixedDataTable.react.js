@@ -564,6 +564,10 @@ var FixedDataTable = React.createClass({
     this.props.onDragDrop && this.props.onDragDrop.apply(this, arguments);
   },
 
+  _onDrop: function _onDrop() {
+    this.props.onDrop && this.props.onDrop.apply(this, arguments);
+  },
+
   _renderRows: function _renderRows( /*number*/offsetTop) /*object*/{
     var state = this.state;
 
@@ -581,6 +585,7 @@ var FixedDataTable = React.createClass({
       onRowMouseLeave: state.onRowMouseLeave,
       rowClassNameGetter: state.rowClassNameGetter,
       onDragDrop: this._dragDrop,
+      onDrop: this._onDrop,
       isSortable: this.props.isSortable,
       rowsCount: state.rowsCount,
       rowGetter: state.rowGetter,

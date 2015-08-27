@@ -759,6 +759,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.props.onDragDrop && this.props.onDragDrop.apply(this, arguments);
 	  },
 
+	  _onDrop: function _onDrop() {
+	    this.props.onDrop && this.props.onDrop.apply(this, arguments);
+	  },
+
 	  _renderRows: function _renderRows( /*number*/offsetTop) /*object*/{
 	    var state = this.state;
 
@@ -776,6 +780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      onRowMouseLeave: state.onRowMouseLeave,
 	      rowClassNameGetter: state.rowClassNameGetter,
 	      onDragDrop: this._dragDrop,
+	      onDrop: this._onDrop,
 	      isSortable: this.props.isSortable,
 	      rowsCount: state.rowsCount,
 	      rowGetter: state.rowGetter,
@@ -3773,7 +3778,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    scrollableColumns: PropTypes.array.isRequired,
 	    showLastRowBorder: PropTypes.bool,
 	    width: PropTypes.number.isRequired,
-	    onDragDrop: PropTypes.func
+	    onDragDrop: PropTypes.func,
+	    onDrop: PropTypes.func
 	  },
 
 	  getInitialState: function getInitialState() /*object*/{
@@ -3854,6 +3860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onMouseEnter: props.onRowMouseEnter,
 	        onMouseLeave: props.onRowMouseLeave,
 	        onDragDrop: props.onDragDrop,
+	        onDrop: props.onDrop,
 	        isSortable: props.isSortable,
 	        className: joinClasses(rowClassNameGetter(rowIndex), cx('public/fixedDataTable/bodyRow'), cx({
 	          'fixedDataTableLayout/hasBottomBorder': hasBottomBorder,
@@ -11534,7 +11541,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    target: {
 	      drop: function drop(props, monitor, component) {
 	        var item = monitor.getItem();
-	        props.onDragDrop(item, props);
+	        if (props.onDrop) {
+	          props.onDrop(item, props);
+	        }
 	      },
 
 	      hover: function hover(props, monitor, component) {

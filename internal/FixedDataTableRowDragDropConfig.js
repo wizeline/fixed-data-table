@@ -16,7 +16,9 @@ var FixedDataTableRowDragDropConfig = {
     target: {
       drop: function (props, monitor, component) {
         var item = monitor.getItem();
-        props.onDragDrop(item, props);
+        if (props.onDrop) {
+          props.onDrop(item, props);
+        }
       },
 
       hover: function (props, monitor, component) {
