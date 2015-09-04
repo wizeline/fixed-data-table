@@ -257,19 +257,24 @@ var FixedDataTableRow = React.createClass({
   render() /*object*/ {
     var connectDragSource = this.props.connectDragSource;
     var connectDropTarget = this.props.connectDropTarget;
+
     var style = {
       width: this.props.width,
       height: this.props.height,
-      opacity: (this.props.isDragging ? 0.1 : 1),
       zIndex: (this.props.zIndex ? this.props.zIndex : 0)
     };
+
+    var classes = cx({
+      'fixedDataTableRowLayout/rowWrapper': true,
+      'public/fixedDataTableRowLayout/rowWrapper/hoveredRow': this.props.hovered,
+      'public/fixedDataTableRowLayout/rowWrapper/dragging': this.props.isDragging
+    });
 
     translateDOMPositionXY(style, 0, this.props.offsetTop);
 
     return connectDragSource(connectDropTarget(
-      <div
-        style={style}
-        className={cx('fixedDataTableRowLayout/rowWrapper')}>
+      <div style={style}
+           className={classes}>
         <FixedDataTableRowImpl
           {...this.props}
           offsetTop={undefined}

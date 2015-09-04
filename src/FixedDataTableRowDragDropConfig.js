@@ -30,7 +30,7 @@ var FixedDataTableRowDragDropConfig = {
     collect: function (connect, monitor) {
       return {
         connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver()
+        hovered: monitor.isOver()
       };
     }
   },
