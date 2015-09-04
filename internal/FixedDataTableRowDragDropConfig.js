@@ -16,15 +16,13 @@ var FixedDataTableRowDragDropConfig = {
     target: {
       drop: function (props, monitor, component) {
         var item = monitor.getItem();
-        if (props.onDrop) {
-          props.onDrop(item, props);
-        }
+        return props.onDrop && props.onDrop(item, props);
       },
 
       hover: function (props, monitor, component) {
         var item = monitor.getItem();
         if (item.index !== props.index) {
-          props.onDragDrop(item, props);
+          return props.onDragDrop && props.onDragDrop(item, props);
         }
       }
     },
@@ -32,7 +30,7 @@ var FixedDataTableRowDragDropConfig = {
     collect: function (connect, monitor) {
       return {
         connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver()
+        hovered: monitor.isOver()
       };
     }
   },
