@@ -11564,13 +11564,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (item.index !== props.index) {
 	          return props.onDragDrop && props.onDragDrop(item, props);
 	        }
+	      },
+
+	      canDrop: function canDrop(props, monitor) {
+	        return !(props.data && props.data.noDroppable);
 	      }
 	    },
 
 	    collect: function collect(connect, monitor) {
 	      return {
 	        connectDropTarget: connect.dropTarget(),
-	        hovered: monitor.isOver()
+	        hovered: monitor.isOver() && monitor.canDrop()
 	      };
 	    }
 	  },
@@ -11586,7 +11590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      },
 
 	      canDrag: function canDrag(props, monitor) {
-	        return !!props.isSortable;
+	        return !!props.isSortable && !(props.data && props.data.noDraggable);
 	      }
 	    },
 

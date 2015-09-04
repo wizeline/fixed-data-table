@@ -24,13 +24,17 @@ var FixedDataTableRowDragDropConfig = {
         if (item.index !== props.index) {
           return props.onDragDrop && props.onDragDrop(item, props);
         }
+      },
+
+      canDrop: function (props, monitor) {
+        return !(props.data && props.data.noDroppable);
       }
     },
 
     collect: function (connect, monitor) {
       return {
         connectDropTarget: connect.dropTarget(),
-        hovered: monitor.isOver()
+        hovered: (monitor.isOver() && monitor.canDrop())
       };
     }
   },
@@ -46,7 +50,7 @@ var FixedDataTableRowDragDropConfig = {
       },
 
       canDrag: function (props, monitor) {
-        return !!props.isSortable;
+        return !!props.isSortable && !(props.data && props.data.noDraggable);
       }
     },
 
@@ -60,4 +64,3 @@ var FixedDataTableRowDragDropConfig = {
 };
 
 module.exports = FixedDataTableRowDragDropConfig;
-
