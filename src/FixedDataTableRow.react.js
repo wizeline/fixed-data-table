@@ -245,7 +245,6 @@ var FixedDataTableRow = React.createClass({
     var style = {
       width: this.props.width,
       height: this.props.height,
-      opacity: (this.props.isDragging ? 0.1 : 1),
       zIndex: (this.props.zIndex ? this.props.zIndex : 0)
     };
 
