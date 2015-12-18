@@ -63,6 +63,6 @@
     "fixed-table"
   ],
   "dependencies": {
-    "react-dnd": "^1.1.4"
+    "react-dnd": "^2.0.0"
   }
 }

@@ -4735,7 +4735,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var style = {
 	      width: this.props.width,
 	      height: this.props.height,
-	      opacity: this.props.isDragging ? 0.1 : 1,
 	      zIndex: this.props.zIndex ? this.props.zIndex : 0
 	    };
 
@@ -5563,7 +5562,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if (process.env.NODE_ENV !== 'production') {
 	  Object.defineProperty(exports, 'default', {
 	    get: function get() {
-	      console.error('React DnD does not provide a default export. ' + 'You are probably missing the curly braces in the import statement. ' + 'Read more: http://gaearon.github.io/react-dnd/docs-troubleshooting.html#react-dnd-does-not-provide-a-default-export');
+	      console.error( // eslint-disable-line no-console
+	      'React DnD does not provide a default export. ' + 'You are probably missing the curly braces in the import statement. ' + 'Read more: http://gaearon.github.io/react-dnd/docs-troubleshooting.html#react-dnd-does-not-provide-a-default-export');
 	    }
 	  });
 	}
@@ -5702,13 +5702,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _utilsCheckDecoratorArguments2 = _interopRequireDefault(_utilsCheckDecoratorArguments);
 
-	function DragDropContext(backend) {
+	function DragDropContext(backendOrModule) {
 	  _utilsCheckDecoratorArguments2['default'].apply(undefined, ['DragDropContext', 'backend'].concat(_slice.call(arguments)));
 
 	  // Auto-detect ES6 default export for people still using ES5
-	  if (typeof backend === 'object' && typeof backend['default'] === 'function') {
-	    backend = backend['default'];
+	  var backend = undefined;
+	  if (typeof backendOrModule === 'object' && typeof backendOrModule['default'] === 'function') {
+	    backend = backendOrModule['default'];
+	  } else {
+	    backend = backendOrModule;
 	  }
+
 	  _invariant2['default'](typeof backend === 'function', 'Expected the backend to be a function or an ES6 module exporting a default function. ' + 'Read more: http://gaearon.github.io/react-dnd/docs-drag-drop-context.html');
 
 	  var childContext = {
@@ -6070,6 +6074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var fnToString = function fnToString(fn) {
 	  return Function.prototype.toString.call(fn);
 	};
+	var objStringValue = fnToString(Object);
 
 	/**
 	 * @param {any} obj The object to inspect.
@@ -6089,7 +6094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var constructor = proto.constructor;
 
-	  return typeof constructor === 'function' && constructor instanceof constructor && fnToString(constructor) === fnToString(Object);
+	  return typeof constructor === 'function' && constructor instanceof constructor && fnToString(constructor) === objStringValue;
 	}
 
 	module.exports = exports['default'];
@@ -8116,7 +8121,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < args.length; i++) {
 	      var arg = args[i];
 	      if (arg && arg.prototype && arg.prototype.render) {
-	        console.error('You seem to be applying the arguments in the wrong order. ' + ('It should be ' + functionName + '(' + signature + ')(Component), not the other way around. ') + 'Read more: http://gaearon.github.io/react-dnd/docs-troubleshooting.html#you-seem-to-be-applying-the-arguments-in-the-wrong-order');
+	        console.error( // eslint-disable-line no-console
+	        'You seem to be applying the arguments in the wrong order. ' + ('It should be ' + functionName + '(' + signature + ')(Component), not the other way around. ') + 'Read more: http://gaearon.github.io/react-dnd/docs-troubleshooting.html#you-seem-to-be-applying-the-arguments-in-the-wrong-order');
 	        return;
 	      }
 	    }
@@ -8151,8 +8157,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _react = __webpack_require__(28);
 
 	var _react2 = _interopRequireDefault(_react);
-
-	var _dndCore = __webpack_require__(70);
 
 	var _utilsShallowEqual = __webpack_require__(114);
 
@@ -8284,7 +8288,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var hasOwn = Object.prototype.hasOwnProperty;
 	  for (var i = 0; i < keysA.length; i++) {
 	    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-
 	      return false;
 	    }
 
@@ -8673,18 +8676,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DragSource;
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _react = __webpack_require__(28);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _utilsShallowEqual = __webpack_require__(114);
-
-	var _utilsShallowEqual2 = _interopRequireDefault(_utilsShallowEqual);
-
-	var _utilsShallowEqualScalar = __webpack_require__(115);
-
-	var _utilsShallowEqualScalar2 = _interopRequireDefault(_utilsShallowEqualScalar);
 
 	var _invariant = __webpack_require__(52);
 
@@ -9294,28 +9285,46 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react = __webpack_require__(28);
 
+	function areOptionsEqual(currentOptions, nextOptions) {
+	  if (currentOptions === nextOptions) {
+	    return true;
+	  }
+
+	  return currentOptions !== null && nextOptions !== null && _utilsShallowEqual2['default'](currentOptions, nextOptions);
+	}
+
 	function bindConnectorMethod(handlerId, connect) {
 	  var disposable = new _disposables.SerialDisposable();
 
 	  var currentNode = null;
 	  var currentOptions = null;
 
-	  function ref(nextWhatever, nextOptions) {
+	  function ref() {
+	    var nextWhatever = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	    var nextOptions = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
 	    // If passed a ReactElement, clone it and attach this function as a ref.
 	    // This helps us achieve a neat API where user doesn't even know that refs
 	    // are being used under the hood.
 	    if (_react.isValidElement(nextWhatever)) {
+	      // Custom components can no longer be wrapped directly in React DnD 2.0
+	      // so that we don't need to depend on findDOMNode() from react-dom.
+	      if (typeof nextWhatever.type !== 'string') {
+	        var displayName = nextWhatever.type.displayName || nextWhatever.type.name || 'the component';
+	        throw new Error('Only native element nodes can now be passed to ' + connect.name + '(). ' + ('You can either wrap ' + displayName + ' into a <div>, or turn it into a ') + 'drag source or a drop target itself.');
+	      }
+
 	      var nextElement = nextWhatever;
 	      return _utilsCloneWithRef2['default'](nextElement, function (inst) {
 	        return ref(inst, nextOptions);
 	      });
 	    }
 
-	    // At this point we can only receive components or DOM nodes.
-	    var nextNode = _react.findDOMNode(nextWhatever);
+	    // At this point we can only receive DOM nodes.
+	    var nextNode = nextWhatever;
 
 	    // If nothing changed, bail out of re-connecting the node to the backend.
-	    if (nextNode === currentNode && _utilsShallowEqual2['default'](currentOptions, nextOptions)) {
+	    if (nextNode === currentNode && areOptionsEqual(currentOptions, nextOptions)) {
 	      return;
 	    }
 
@@ -9376,18 +9385,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 134 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	exports.__esModule = true;
-	exports['default'] = registerSource;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _invariant = __webpack_require__(52);
-
-	var _invariant2 = _interopRequireDefault(_invariant);
+	exports["default"] = registerSource;
 
 	function registerSource(type, source, manager) {
 	  var registry = manager.getRegistry();
@@ -9395,7 +9398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  function unregisterSource() {
 	    registry.removeSource(sourceId);
-	  };
+	  }
 
 	  return {
 	    handlerId: sourceId,
@@ -9403,7 +9406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	}
 
-	module.exports = exports['default'];
+	module.exports = exports["default"];
 
 /***/ },
 /* 135 */
@@ -9607,8 +9610,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function createSourceConnector(backend) {
 	  return {
-	    dragSource: backend.connectDragSource.bind(backend),
-	    dragPreview: backend.connectDragPreview.bind(backend)
+	    dragSource: function connectDragSource() {
+	      return backend.connectDragSource.apply(backend, arguments);
+	    },
+	    dragPreview: function connectDragPreview() {
+	      return backend.connectDragPreview.apply(backend, arguments);
+	    }
 	  };
 	}
 
@@ -9648,18 +9655,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DropTarget;
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _react = __webpack_require__(28);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _utilsShallowEqual = __webpack_require__(114);
-
-	var _utilsShallowEqual2 = _interopRequireDefault(_utilsShallowEqual);
-
-	var _utilsShallowEqualScalar = __webpack_require__(115);
-
-	var _utilsShallowEqualScalar2 = _interopRequireDefault(_utilsShallowEqualScalar);
 
 	var _invariant = __webpack_require__(52);
 
@@ -9735,18 +9730,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 140 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	exports.__esModule = true;
-	exports['default'] = registerTarget;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _invariant = __webpack_require__(52);
-
-	var _invariant2 = _interopRequireDefault(_invariant);
+	exports["default"] = registerTarget;
 
 	function registerTarget(type, target, manager) {
 	  var registry = manager.getRegistry();
@@ -9754,7 +9743,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  function unregisterTarget() {
 	    registry.removeTarget(targetId);
-	  };
+	  }
 
 	  return {
 	    handlerId: targetId,
@@ -9762,7 +9751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	}
 
-	module.exports = exports['default'];
+	module.exports = exports["default"];
 
 /***/ },
 /* 141 */
@@ -9954,7 +9943,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function createTargetConnector(backend) {
 	  return {
-	    dropTarget: backend.connectDropTarget.bind(backend)
+	    dropTarget: function connectDropTarget() {
+	      return backend.connectDropTarget.apply(backend, arguments);
+	    }
 	  };
 	}
 
